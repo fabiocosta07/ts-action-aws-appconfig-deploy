@@ -1,5 +1,6 @@
 import * as core from '@actions/core'
 import { wait } from './wait'
+import { createHostedConfigurationVersion } from './aws-appconfig/createConfigurationVersion'
 
 /**
  * The main function for the action.
@@ -8,6 +9,8 @@ import { wait } from './wait'
 export async function run(): Promise<void> {
   try {
     const ms: string = core.getInput('milliseconds')
+
+    createHostedConfigurationVersion();
 
     // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
     core.debug(`Waiting ${ms} milliseconds ...`)
