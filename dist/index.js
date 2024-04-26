@@ -45623,33 +45623,45 @@ exports["default"] = _default;
 /***/ }),
 
 /***/ 7203:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
 
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createHostedConfigurationVersion = void 0;
 const client_appconfig_1 = __nccwpck_require__(1394);
-const createHostedConfigurationVersion = async () => {
-    const config = { key: 'value' };
+const fs_1 = __importDefault(__nccwpck_require__(7147));
+const createHostedConfigurationVersion = async (configPath) => {
     const configProfileId = 'xd5454p';
     const appId = 'ueseu1u';
-    const request = {
-        ApplicationId: appId,
-        Content: JSON.stringify(config),
-        ContentType: 'application/json',
-        ConfigurationProfileId: configProfileId
-    };
-    try {
-        const command = new client_appconfig_1.CreateHostedConfigurationVersionCommand(request);
-        const client = new client_appconfig_1.AppConfigClient({
-            region: 'us-east-1'
-        });
-        const response = await client.send(command);
-        console.log('Configuration created:', response);
+    // Check if the file exists
+    if (fs_1.default.existsSync(configPath)) {
+        // Read the content of the file
+        const data = fs_1.default.readFileSync(configPath, 'utf8');
+        console.log(`Content of config: ${data}`);
+        const request = {
+            ApplicationId: appId,
+            Content: JSON.stringify(data),
+            ContentType: 'application/json',
+            ConfigurationProfileId: configProfileId
+        };
+        try {
+            const command = new client_appconfig_1.CreateHostedConfigurationVersionCommand(request);
+            const client = new client_appconfig_1.AppConfigClient({
+                region: 'us-east-1'
+            });
+            const response = await client.send(command);
+            console.log('Configuration created:', response);
+        }
+        catch (error) {
+            console.error('Error creating configuration:', error);
+        }
     }
-    catch (error) {
-        console.error('Error creating configuration:', error);
+    else {
+        console.log('config not found');
     }
 };
 exports.createHostedConfigurationVersion = createHostedConfigurationVersion;
@@ -45688,7 +45700,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.run = void 0;
 const core = __importStar(__nccwpck_require__(2186));
-const wait_1 = __nccwpck_require__(5259);
 const create_config_version_1 = __nccwpck_require__(7203);
 /**
  * The main function for the action.
@@ -45696,16 +45707,8 @@ const create_config_version_1 = __nccwpck_require__(7203);
  */
 async function run() {
     try {
-        const ms = core.getInput('milliseconds');
-        (0, create_config_version_1.createHostedConfigurationVersion)();
-        // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-        core.debug(`Waiting ${ms} milliseconds ...`);
-        // Log the current timestamp, wait, then log the new timestamp
-        core.debug(new Date().toTimeString());
-        await (0, wait_1.wait)(parseInt(ms, 10));
-        core.debug(new Date().toTimeString());
-        // Set outputs for other workflow steps to use
-        core.setOutput('time', new Date().toTimeString());
+        const configPath = core.getInput('configPath');
+        (0, create_config_version_1.createHostedConfigurationVersion)(configPath);
     }
     catch (error) {
         // Fail the workflow run if an error occurs
@@ -45714,31 +45717,6 @@ async function run() {
     }
 }
 exports.run = run;
-
-
-/***/ }),
-
-/***/ 5259:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.wait = void 0;
-/**
- * Wait for a number of milliseconds.
- * @param milliseconds The number of milliseconds to wait.
- * @returns {Promise<string>} Resolves with 'done!' after the wait is over.
- */
-async function wait(milliseconds) {
-    return new Promise(resolve => {
-        if (isNaN(milliseconds)) {
-            throw new Error('milliseconds not a number');
-        }
-        setTimeout(() => resolve('done!'), milliseconds);
-    });
-}
-exports.wait = wait;
 
 
 /***/ }),
