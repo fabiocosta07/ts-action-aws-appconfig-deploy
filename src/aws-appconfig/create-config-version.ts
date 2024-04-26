@@ -20,7 +20,7 @@ export const createHostedConfigurationVersion = async (
 
     const request: CreateHostedConfigurationVersionCommandInputType = {
       ApplicationId: appId,
-      Content: JSON.stringify(data),
+      Content: data,
       ContentType: 'application/json',
       ConfigurationProfileId: configProfileId
     }
