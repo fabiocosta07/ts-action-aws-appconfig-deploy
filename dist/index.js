@@ -45644,7 +45644,7 @@ const createHostedConfigurationVersion = async (configPath) => {
         console.log(`Content of config: ${data}`);
         const request = {
             ApplicationId: appId,
-            Content: JSON.stringify(data),
+            Content: JSON.stringify(JSON.parse(data)),
             ContentType: 'application/json',
             ConfigurationProfileId: configProfileId
         };
