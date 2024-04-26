@@ -45641,10 +45641,11 @@ const createHostedConfigurationVersion = async (configPath) => {
     if (fs_1.default.existsSync(configPath)) {
         // Read the content of the file
         const data = fs_1.default.readFileSync(configPath, 'utf8');
+        const jsonData = JSON.parse(data);
         console.log(`Content of config: ${data}`);
         const request = {
             ApplicationId: appId,
-            Content: JSON.stringify(JSON.parse(data)),
+            Content: JSON.stringify(jsonData),
             ContentType: 'application/json',
             ConfigurationProfileId: configProfileId
         };

@@ -16,11 +16,12 @@ export const createHostedConfigurationVersion = async (
   if (fs.existsSync(configPath)) {
     // Read the content of the file
     const data = fs.readFileSync(configPath, 'utf8')
+    const jsonData = JSON.parse(data)
     console.log(`Content of config: ${data}`)
 
     const request: CreateHostedConfigurationVersionCommandInputType = {
       ApplicationId: appId,
-      Content: JSON.stringify(JSON.parse(data)),
+      Content: JSON.stringify(jsonData),
       ContentType: 'application/json',
       ConfigurationProfileId: configProfileId
     }
